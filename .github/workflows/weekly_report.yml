@@ -1,0 +1,38 @@
+name: 毎日スクリーニングレポート生成
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # UTC 3:00 = JST 12:00（毎日正午）
+  workflow_dispatch:        # GitHubの画面から手動実行も可能
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # docs/index.html をコミット・プッシュするために必要
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 をセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 依存ライブラリをインストール
+        run: pip install -r requirements.txt
+
+      - name: スクリーニング＆レポート生成
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python main.py
+
+      - name: docs/index.html をコミット・プッシュ
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/index.html
+          git diff --staged --quiet || git commit -m "日次レポート更新: $(date +'%Y-%m-%d')"
+          git push
