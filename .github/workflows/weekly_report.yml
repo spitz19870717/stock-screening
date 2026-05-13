@@ -2,7 +2,7 @@ name: 毎日スクリーニングレポート生成
 
 on:
   schedule:
-    - cron: '0 3 * * *'   # UTC 3:00 = JST 12:00（毎日正午）
+   - cron: '10 0 * * *'  # UTC 0:10 = JST 9:10（毎朝））
   workflow_dispatch:        # GitHubの画面から手動実行も可能
 
 jobs:
