@@ -2,7 +2,9 @@ name: 毎日スクリーニングレポート生成
 
 on:
   schedule:
-   - cron: '10 0 * * *'  # UTC 0:10 = JST 9:10（毎朝））
+    - cron: '13 0 * * *'   # UTC 0:13 = JST 9:13（本命）
+    - cron: '37 0 * * *'   # UTC 0:37 = JST 9:37（1次バックアップ）
+    - cron: '17 1 * * *'   # UTC 1:17 = JST 10:17（2次バックアップ）
   workflow_dispatch:        # GitHubの画面から手動実行も可能
 
 jobs:
@@ -10,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write       # docs/index.html をコミット・プッシュするために必要
-
     steps:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v4
